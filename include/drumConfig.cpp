@@ -1,6 +1,6 @@
 #include <Arduino.h>
 #include <hellodrum.h>
-#include "BassPedal.cpp"
+#include "Pedal.cpp"
 
 // byte SNARE[12] = {
 //     100, // sensitivity (1-100)
@@ -18,7 +18,7 @@
 // };
 // HelloDrum snare(SNARE[10], SNARE[11]);
 byte SNARE[7] = {
-    70, // sensitivity
+    60, // sensitivity
     5,  // threshold
     20, // scantime
     20, // masktime
@@ -28,7 +28,16 @@ byte SNARE[7] = {
 };
 HelloDrum snare(SNARE[6]);
 
-byte HIHAT[7] = {
+byte HIHAT_OPEN[7] = {
+    60, // sensitivity
+    15, // threshold
+    20, // scantime
+    70, // masktime
+    46, // note
+    2,  // curve type
+    27  // pin
+};
+byte HIHAT_CLOSED[7] = {
     60, // sensitivity
     5,  // threshold
     20, // scantime
@@ -37,7 +46,7 @@ byte HIHAT[7] = {
     2,  // curve type
     27  // pin
 };
-HelloDrum hihat(HIHAT[6]);
+HelloDrum hihat(HIHAT_OPEN[6]);
 
 byte RIDE[7] = {
     80, // sensitivity
@@ -70,4 +79,26 @@ byte BASS[7] = {
     0,  // curve type
     22  // pin
 };
-BassPedal bass(BASS[6]);
+Pedal bass(BASS[6]);
+
+byte BASS2[7] = {
+    0,  // sensitivity
+    0,  // threshold
+    0,  // scantime
+    50, // masktime
+    36, // note
+    0,  // curve type
+    21  // pin
+};
+Pedal bass2(BASS2[6]);
+
+byte HH_PEDAL[7] = {
+    0,  // sensitivity
+    0,  // threshold
+    0,  // scantime
+    50, // masktime
+    44, // note
+    0,  // curve type
+    21  // pin
+};
+Pedal hh_pedal(HH_PEDAL[6]);

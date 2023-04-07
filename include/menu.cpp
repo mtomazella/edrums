@@ -7,7 +7,7 @@ namespace Menu
 
   void setup()
   {
-    display.init(); // initialize the lcd
+    display.init();
     display.backlight();
     display.home();
 
