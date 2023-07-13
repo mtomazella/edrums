@@ -1,4 +1,3 @@
-#include <Arduino.h>
 #include <hellodrum.h>
 #include "Pedal.cpp"
 
@@ -11,7 +10,6 @@ byte SNARE[7] = {
     1,  // curve type (0-4)
     25, // pin
 };
-HelloDrum snare(SNARE[6]);
 
 byte HIHAT_OPEN[7] = {
     60, // sensitivity
@@ -31,7 +29,6 @@ byte HIHAT_CLOSED[7] = {
     2,  // curve type
     33  // pin
 };
-HelloDrum hihat(HIHAT_OPEN[6]);
 
 byte RIDE[7] = {
     80, // sensitivity
@@ -42,7 +39,6 @@ byte RIDE[7] = {
     1,  // curve type
     0   // pin
 };
-HelloDrum ride(RIDE[6]);
 
 byte CRASH[7] = {
     70, // sensitivity
@@ -53,7 +49,6 @@ byte CRASH[7] = {
     1,  // curve type
     26  // pin
 };
-HelloDrum crash(CRASH[6]);
 
 byte BASS[7] = {
     0,  // sensitivity
@@ -64,7 +59,6 @@ byte BASS[7] = {
     0,  // curve type
     22  // pin
 };
-Pedal bass(BASS[6]);
 
 byte BASS2[7] = {
     0,  // sensitivity
@@ -75,7 +69,6 @@ byte BASS2[7] = {
     0,  // curve type
     21  // pin
 };
-Pedal bass2(BASS2[6]);
 
 byte HH_PEDAL[7] = {
     0,  // sensitivity
@@ -86,4 +79,20 @@ byte HH_PEDAL[7] = {
     0,  // curve type
     21  // pin
 };
+
+HelloDrum snare(SNARE[6]);
+HelloDrum hihat(HIHAT_OPEN[6]);
+HelloDrum ride(RIDE[6]);
+HelloDrum crash(CRASH[6]);
+Pedal bass(BASS[6]);
+Pedal bass2(BASS2[6]);
 Pedal hh_pedal(HH_PEDAL[6]);
+
+#define forEachDrumDo(action) \
+    snare action;             \
+    hihat action;             \
+    ride action;              \
+    crash action;             \
+    bass action;              \
+    bass2 action;             \
+    hh_pedal action;

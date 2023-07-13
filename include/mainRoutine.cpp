@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include <MIDI.h>
 
-#include "drumConfig.cpp"
+#include "drums.hpp"
 #include "menu.cpp"
 
 #define MIDI_CHANNEL 1
@@ -28,6 +28,14 @@ namespace MainRoutine
     ride.setCurve(RIDE[5]);
     crash.setCurve(CRASH[5]);
     bass.setCurve(BASS[5]);
+
+    snare.settingName("Snare");
+    hihat.settingName("Hihat");
+    ride.settingName("Ride");
+    crash.settingName("Crash");
+    // bass.settingName("Bass");
+
+    forEachDrumDo(.loadMemory());
 
     hh_pedal.velocity = 50;
 

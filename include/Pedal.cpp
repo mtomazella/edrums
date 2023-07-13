@@ -1,18 +1,17 @@
 #include <Arduino.h>
-#include <stdlib.h>
+#include <hellodrum.h>
 
-class Pedal
+class Pedal : public HelloDrum
 {
 public:
   byte pin;
   long lastPressed = 0;
   long lastReleased = 0;
   bool hasReleased = true;
-  bool hit = false;
   bool pressed = false;
   byte velocity = 127;
 
-  Pedal(byte pin)
+  Pedal(byte pin) : HelloDrum(pin)
   {
     this->pin = pin;
     pinMode(pin, INPUT_PULLUP);
