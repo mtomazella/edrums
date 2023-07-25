@@ -1,3 +1,5 @@
+#pragma once
+
 #include "Drum.hpp"
 
 EDrum<HelloDrum> SNARE = EDrum<HelloDrum>(
@@ -92,5 +94,10 @@ EDrum<Pedal> HH_PEDAL = EDrum<Pedal>(
 
 void setupDrumDefaults()
 {
-  HH_PEDAL.fixVelocity(50);
+    HH_PEDAL.fixVelocity(50);
 }
+
+#define NUM_DRUMS 4
+#define NUM_PEDALS 3
+EDrum<HelloDrum> *DRUMS[NUM_DRUMS] = {&SNARE, &HIHAT_CLOSED, &HIHAT_OPEN, &CRASH};
+EDrum<Pedal> *PEDALS[NUM_PEDALS] = {&HH_PEDAL, &BASS, &BASS2};

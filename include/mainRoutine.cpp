@@ -3,12 +3,14 @@
 
 #include "Drum.hpp"
 #include "drumsSetup.hpp"
-#include "menu.cpp"
+#include "Menu.hpp"
 
 #define MIDI_CHANNEL 1
 MIDI_CREATE_DEFAULT_INSTANCE();
 
 #define DOUBLE_BASS_SELECTOR_PIN 19
+
+Menu menu;
 
 namespace MainRoutine
 {
@@ -20,7 +22,8 @@ namespace MainRoutine
     pinMode(DOUBLE_BASS_SELECTOR_PIN, INPUT_PULLUP);
 
     setupDrumDefaults();
-    Menu::setup();
+
+    menu.init();
   }
 
   template <typename DrumT>
@@ -37,7 +40,7 @@ namespace MainRoutine
 
   void loop()
   {
-    Menu::loop();
+    menu.loop();
 
     bool doubleBassEnabled = digitalRead(DOUBLE_BASS_SELECTOR_PIN) == LOW;
 
