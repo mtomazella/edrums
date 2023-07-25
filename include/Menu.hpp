@@ -140,8 +140,8 @@ public:
   {
     if (currentDrum < NUM_DRUMS)
     {
-      displayDrum<HelloDrum>(DRUMS[currentDrum]);
       displayOption<HelloDrum>(DRUMS[currentDrum], true);
+      displayDrum<HelloDrum>(DRUMS[currentDrum]);
     }
     else
     {

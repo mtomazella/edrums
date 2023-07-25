@@ -21,7 +21,7 @@ EDrum<HelloDrum> HIHAT_OPEN = EDrum<HelloDrum>(
     70, // masktime
     46, // note
     2,  // curve type
-    33  // pin
+    26  // pin
 );
 
 EDrum<HelloDrum> HIHAT_CLOSED = EDrum<HelloDrum>(
@@ -32,7 +32,7 @@ EDrum<HelloDrum> HIHAT_CLOSED = EDrum<HelloDrum>(
     50, // masktime
     42, // note
     2,  // curve type
-    33  // pin
+    26  // pin
 );
 
 EDrum<HelloDrum> RIDE = EDrum<HelloDrum>(
@@ -54,7 +54,7 @@ EDrum<HelloDrum> CRASH = EDrum<HelloDrum>(
     50, // masktime
     39, // note
     1,  // curve type
-    26  // pin
+    14  // pin
 );
 
 EDrum<Pedal> BASS = EDrum<Pedal>(
@@ -65,7 +65,7 @@ EDrum<Pedal> BASS = EDrum<Pedal>(
     20,  // masktime
     36,  // note
     0,   // curve type
-    22,  // pin
+    23,  // pin
     true // isPedal
 );
 
@@ -77,7 +77,7 @@ EDrum<Pedal> BASS2 = EDrum<Pedal>(
     50,  // masktime
     36,  // note
     0,   // curve type
-    21,  // pin
+    18,  // pin
     true // isPedal
 );
 
@@ -88,7 +88,7 @@ EDrum<Pedal> HH_PEDAL = EDrum<Pedal>(
     50,         // masktime
     44,         // note
     0,          // curve
-    21,         // pin
+    18,         // pin
     true        // isPedal
 );
 

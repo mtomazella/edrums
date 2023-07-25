@@ -1,6 +1,5 @@
 #include <Arduino.h>
 #include <MIDI.h>
-
 #include "Drum.hpp"
 #include "drumsSetup.hpp"
 #include "Menu.hpp"
@@ -27,14 +26,14 @@ namespace MainRoutine
   }
 
   template <typename DrumT>
-  void readAndSend(EDrum<DrumT> drum, byte noteToOff = 0)
+  void readAndSend(EDrum<DrumT> *drum, byte noteToOff = 0)
   {
-    DrumSenseInformation result = drum.sense();
+    DrumSenseInformation result = drum->sense();
     if (result.hit == true)
     {
-      MIDI.sendNoteOn(drum.note, result.velocity, MIDI_CHANNEL);
-      if (noteToOff != 0)
-        MIDI.sendNoteOff(noteToOff, 0, MIDI_CHANNEL);
+      MIDI.sendNoteOn(drum->note, result.velocity, MIDI_CHANNEL);
+      // if (noteToOff != 0)
+      //   MIDI.sendNoteOff(noteToOff, 0, MIDI_CHANNEL);
     }
   }
 
@@ -44,18 +43,18 @@ namespace MainRoutine
 
     bool doubleBassEnabled = digitalRead(DOUBLE_BASS_SELECTOR_PIN) == LOW;
 
-    readAndSend(SNARE);
-    readAndSend(CRASH);
-    readAndSend(BASS);
+    readAndSend<HelloDrum>(&SNARE);
+    readAndSend<HelloDrum>(&CRASH);
+    readAndSend<Pedal>(&BASS);
 
     if (doubleBassEnabled)
-      readAndSend(BASS2);
+      readAndSend<Pedal>(&BASS2);
     else
-      readAndSend(HH_PEDAL, HIHAT_OPEN.note);
+      readAndSend<Pedal>(&HH_PEDAL, HIHAT_OPEN.note);
 
     if (doubleBassEnabled || HH_PEDAL.isPressed())
-      readAndSend(HIHAT_CLOSED);
+      readAndSend<HelloDrum>(&HIHAT_CLOSED);
     else
-      readAndSend(HIHAT_OPEN);
+      readAndSend<HelloDrum>(&HIHAT_OPEN);
   }
 }
