@@ -32,8 +32,8 @@ namespace MainRoutine
     if (result.hit == true)
     {
       MIDI.sendNoteOn(drum->note, result.velocity, MIDI_CHANNEL);
-      // if (noteToOff != 0)
-      //   MIDI.sendNoteOff(noteToOff, 0, MIDI_CHANNEL);
+      if (noteToOff != 0)
+        MIDI.sendNoteOff(noteToOff, 0, MIDI_CHANNEL);
     }
   }
 
@@ -45,12 +45,13 @@ namespace MainRoutine
 
     readAndSend<HelloDrum>(&SNARE);
     readAndSend<HelloDrum>(&CRASH);
+    readAndSend<HelloDrum>(&RIDE);
     readAndSend<Pedal>(&BASS);
 
-    if (doubleBassEnabled)
-      readAndSend<Pedal>(&BASS2);
-    else
-      readAndSend<Pedal>(&HH_PEDAL, HIHAT_OPEN.note);
+    // if (doubleBassEnabled)
+    //   readAndSend<Pedal>(&BASS2);
+    // else
+    readAndSend<Pedal>(&HH_PEDAL, HIHAT_OPEN.note);
 
     if (doubleBassEnabled || HH_PEDAL.isPressed())
       readAndSend<HelloDrum>(&HIHAT_CLOSED);

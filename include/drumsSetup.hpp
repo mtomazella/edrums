@@ -43,7 +43,7 @@ EDrum<HelloDrum> RIDE = EDrum<HelloDrum>(
     50, // masktime
     51, // note
     1,  // curve type
-    0   // pin
+    27  // pin
 );
 
 EDrum<HelloDrum> CRASH = EDrum<HelloDrum>(
@@ -65,7 +65,7 @@ EDrum<Pedal> BASS = EDrum<Pedal>(
     20,  // masktime
     36,  // note
     0,   // curve type
-    23,  // pin
+    18,  // pin
     true // isPedal
 );
 
@@ -77,19 +77,20 @@ EDrum<Pedal> BASS2 = EDrum<Pedal>(
     50,  // masktime
     36,  // note
     0,   // curve type
-    18,  // pin
+    0,   // pin
     true // isPedal
 );
 
 EDrum<Pedal> HH_PEDAL = EDrum<Pedal>(
-    "HH Pedal", // sensitivity
-    0,          // threshold
-    0,          // scantime
-    50,         // masktime
-    44,         // note
-    0,          // curve
-    18,         // pin
-    true        // isPedal
+    "HH Pedal",
+    0,   // sensitivity
+    0,   // threshold
+    0,   // scantime
+    20,  // masktime
+    44,  // note
+    0,   // curve
+    23,  // pin
+    true // isPedal
 );
 
 void setupDrumDefaults()
@@ -97,7 +98,7 @@ void setupDrumDefaults()
     HH_PEDAL.fixVelocity(50);
 }
 
-#define NUM_DRUMS 4
+#define NUM_DRUMS 5
 #define NUM_PEDALS 3
-EDrum<HelloDrum> *DRUMS[NUM_DRUMS] = {&SNARE, &HIHAT_CLOSED, &HIHAT_OPEN, &CRASH};
+EDrum<HelloDrum> *DRUMS[NUM_DRUMS] = {&SNARE, &HIHAT_CLOSED, &HIHAT_OPEN, &CRASH, &RIDE};
 EDrum<Pedal> *PEDALS[NUM_PEDALS] = {&HH_PEDAL, &BASS, &BASS2};

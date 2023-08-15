@@ -11,14 +11,14 @@ LiquidCrystal_I2C display(0x27, 20, 4);
 #define ENCODER_PIN_SW 4
 RotaryEncoder encoder(ENCODER_PIN_DT, ENCODER_PIN_CLK);
 
-enum MenuDepth
+enum class MenuDepth
 {
   selectingDrum,
   selectingOption,
   editingOption
 };
 
-enum DrumTab
+enum class DrumTab
 {
   none,
   note,
@@ -26,10 +26,12 @@ enum DrumTab
   threshold,
   curveType,
   masktime,
-  scantime
+  scantime,
+  fixVelocity
 };
+short tabCount = 8;
 
-enum ButtonAction
+enum class ButtonAction
 {
   noAction,
   pressed,
@@ -74,6 +76,65 @@ public:
     return newEncoderPosition;
   }
 
+  template <typename DrumT>
+  int getOptionValue(EDrum<DrumT> *drum, DrumTab option)
+  {
+    switch (currentEditingTab)
+    {
+    case DrumTab::note:
+      return drum->note;
+      break;
+    case DrumTab::sensitivity:
+      return drum->sensitivity;
+      break;
+    case DrumTab::threshold:
+      return drum->threshold;
+      break;
+    case DrumTab::curveType:
+      return drum->curveType;
+      break;
+    case DrumTab::masktime:
+      return drum->masktime;
+      break;
+    case DrumTab::scantime:
+      return drum->scantime;
+      break;
+    case DrumTab::fixVelocity:
+      return drum->fixedVelocity;
+      break;
+    }
+    return 0;
+  }
+
+  template <typename DrumT>
+  void setOptionValue(EDrum<DrumT> *drum, DrumTab option, byte value)
+  {
+    switch (currentEditingTab)
+    {
+    case DrumTab::note:
+      drum->note = value;
+      break;
+    case DrumTab::sensitivity:
+      drum->sensitivity = value;
+      break;
+    case DrumTab::threshold:
+      drum->threshold = value;
+      break;
+    case DrumTab::curveType:
+      drum->curveType = value;
+      break;
+    case DrumTab::masktime:
+      drum->masktime = value;
+      break;
+    case DrumTab::scantime:
+      drum->scantime = value;
+      break;
+    case DrumTab::fixVelocity:
+      drum->fixedVelocity = value;
+      break;
+    }
+  }
+
   ButtonAction getButtonAction()
   {
     static unsigned long lastPress = 0;
@@ -81,30 +142,32 @@ public:
     bool buttonBeingPressed = digitalRead(ENCODER_PIN_SW) == LOW;
     unsigned long time = millis();
 
-    if (buttonBeingPressed && lastRelease >= lastPress && time - lastRelease >= 100)
+    if (buttonBeingPressed && lastRelease >= lastPress)
       lastPress = time;
     else if (!buttonBeingPressed && lastPress > lastRelease)
     {
       lastRelease = time;
-      if (time - lastPress > 1000)
-        return ButtonAction::pressed;
-      else
+
+      if (time - lastPress < 100)
+        return ButtonAction::noAction;
+      if (lastRelease - lastPress > 300)
         return ButtonAction::longPressed;
+      return ButtonAction::pressed;
     }
+
     return ButtonAction::noAction;
   }
 
   void inputLoop()
   {
     encoder.tick();
+    ButtonAction buttonAction = getButtonAction();
 
     int encoderPosition = encoder.getPosition();
-    if (encoderPosition == lastEncoderPosition)
+    if (encoderPosition == lastEncoderPosition && buttonAction == ButtonAction::noAction)
       return;
     requestDisplay = true;
     lastEncoderPosition = encoderPosition;
-
-    ButtonAction buttonAction = getButtonAction();
 
     if (menuDepth == MenuDepth::selectingDrum)
     {
@@ -112,7 +175,55 @@ public:
       currentDrum = encoderPosition;
 
       if (buttonAction == ButtonAction::pressed)
+      {
         menuDepth = MenuDepth::selectingOption;
+        encoder.setPosition(0);
+      }
+    }
+    else if (menuDepth == MenuDepth::selectingOption)
+    {
+      encoderPosition = getClampedEncoderPosition(encoderPosition, 1, tabCount - 1);
+      currentEditingTab = (DrumTab)encoderPosition;
+
+      if (buttonAction == ButtonAction::longPressed)
+      {
+        menuDepth = MenuDepth::selectingDrum;
+        encoder.setPosition(currentDrum);
+      }
+      else if (buttonAction == ButtonAction::pressed)
+      {
+        menuDepth = MenuDepth::editingOption;
+        encoder.setPosition(
+            currentDrum < NUM_DRUMS
+                ? getOptionValue<HelloDrum>(DRUMS[currentDrum], currentEditingTab)
+                : getOptionValue<Pedal>(PEDALS[currentDrum - NUM_DRUMS], currentEditingTab));
+      }
+    }
+    else if (menuDepth == MenuDepth::editingOption)
+    {
+      int min = 1, max = 100;
+      if (currentEditingTab == DrumTab::curveType)
+      {
+        min = 0;
+        max = 4;
+      }
+      else if (currentEditingTab == DrumTab::fixVelocity || currentEditingTab == DrumTab::note)
+      {
+        min = 0;
+        max = 127;
+      }
+
+      encoderPosition = getClampedEncoderPosition(encoderPosition, min, max);
+      if (currentDrum < NUM_DRUMS)
+        setOptionValue<HelloDrum>(DRUMS[currentDrum], currentEditingTab, encoderPosition);
+      else
+        setOptionValue<Pedal>(PEDALS[currentDrum - NUM_DRUMS], currentEditingTab, encoderPosition);
+
+      if (buttonAction == ButtonAction::longPressed)
+      {
+        menuDepth = MenuDepth::selectingDrum;
+        encoder.setPosition(currentDrum);
+      }
     }
   }
 
@@ -133,6 +244,24 @@ public:
     case DrumTab::note:
       display.printf("Note %d", drum->note);
       break;
+    case DrumTab::sensitivity:
+      display.printf("Sensitivity %d", drum->sensitivity);
+      break;
+    case DrumTab::threshold:
+      display.printf("Threshold %d", drum->threshold);
+      break;
+    case DrumTab::curveType:
+      display.printf("Curve %d", drum->curveType);
+      break;
+    case DrumTab::masktime:
+      display.printf("Masktime %d", drum->masktime);
+      break;
+    case DrumTab::scantime:
+      display.printf("Scantime %d", drum->scantime);
+      break;
+    case DrumTab::fixVelocity:
+      display.printf("F. Velocity %d", drum->fixedVelocity);
+      break;
     }
   }
 
@@ -140,13 +269,15 @@ public:
   {
     if (currentDrum < NUM_DRUMS)
     {
-      displayOption<HelloDrum>(DRUMS[currentDrum], true);
       displayDrum<HelloDrum>(DRUMS[currentDrum]);
+      if (menuDepth != MenuDepth::selectingDrum)
+        displayOption<HelloDrum>(DRUMS[currentDrum], true);
     }
     else
     {
       displayDrum<Pedal>(PEDALS[currentDrum - NUM_DRUMS]);
-      displayOption<Pedal>(PEDALS[currentDrum - NUM_DRUMS], true);
+      if (menuDepth != MenuDepth::selectingDrum)
+        displayOption<Pedal>(PEDALS[currentDrum - NUM_DRUMS], true);
     }
   }
 
